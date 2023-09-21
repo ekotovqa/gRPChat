@@ -1,5 +1,5 @@
 using Grpc.Core;
-using gRPChat.Backend;
+using gRPChat.Protos;
 
 namespace gRPChat.Backend.Services
 {
