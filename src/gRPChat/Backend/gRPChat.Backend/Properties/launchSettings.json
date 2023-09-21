@@ -3,8 +3,8 @@
     "gRPChat.Backend": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:5003;https://localhost:7209",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5003;https://localhost:7209",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
