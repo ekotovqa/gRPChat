@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.57.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.22" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Frontend\Web\gRPChat.Web\gRPChat.Web.csproj" />
     <ProjectReference Include="..\..\Shared\gRPChat.Protos\gRPChat.Protos\gRPChat.Protos.csproj" />
   </ItemGroup>
 
