@@ -16,6 +16,8 @@ app.UseBlazorFrameworkFiles();
 
 app.UseStaticFiles();
 
+app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GreeterService>().EnableGrpcWeb();
 app.MapFallbackToFile("index.html");
