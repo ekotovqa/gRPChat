@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gRPChat.Desktop", "Frontend
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gRPChat.Desktop.Desktop", "Frontend\Desktop\gRPChat.Desktop.Desktop\gRPChat.Desktop.Desktop.csproj", "{93F0AB26-8C3A-44F1-8799-DBC70386ED2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPChat.Protos", "Shared\gRPChat.Protos\gRPChat.Protos\gRPChat.Protos.csproj", "{0822A62F-64D9-4DC1-913F-8CED04E9F6D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gRPChat.Protos", "Shared\gRPChat.Protos\gRPChat.Protos\gRPChat.Protos.csproj", "{0822A62F-64D9-4DC1-913F-8CED04E9F6D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

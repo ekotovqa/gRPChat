@@ -1,20 +1,42 @@
 ﻿@page "/"
+@using Grpc.Core;
 @using gRPChat.Protos;
 
 @inject Greeter.GreeterClient GreeterClient
 
-<h2>@_message</h2>
+<div style="height: 80vh; width: 50vw;">
+
+    <div style="display: grid; grid-template-rows: 1fr auto; height: 100%">
+
+        <div style="grid-row: 1; overflow-y: auto; align-self: end; max-height: 100%">
+            <ChatMessagesView Messages="_messages" />
+        </div>
+        
+
+        <div style ="grid-row: 2">
+            <RadzenTextArea Placeholder="Enter here..." class="w-100" />
+            <RadzenButton Text="Primary" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+
+    </div>
+    
+
+</div>
+
 
 @code
 {
-    private string _message;
+    private List<string> _messages = new List<string>();
+
     protected override async Task OnInitializedAsync()
     {
-        var response = await GreeterClient.SayHelloAsync(new HelloRequest
-        {
-            Name = "Evgeny"
-        });
+        using var serverStream = GreeterClient.JoinChat(new HelloRequest());
+        var stream = serverStream.ResponseStream;
 
-        _message = response.Message;
+        await foreach (var message in stream.ReadAllAsync())
+        {
+            _messages.Add(message.Message);
+            this.StateHasChanged();
+        }    
     }
 }
