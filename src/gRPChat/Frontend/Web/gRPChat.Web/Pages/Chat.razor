@@ -2,7 +2,7 @@
 @using Grpc.Core;
 @using gRPChat.Protos;
 
-@inject Greeter.GreeterClient GreeterClient
+@inject ChatRoom.ChatRoomClient ChatRoomClient
 
 <div style="height: 80vh; width: 50vw;">
 
@@ -12,14 +12,14 @@
             <ChatMessagesView Messages="_messages" />
         </div>
         
-
         <div style ="grid-row: 2">
-            <RadzenTextArea Placeholder="Enter here..." class="w-100" />
-            <RadzenButton Text="Primary" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenTextArea Placeholder="Enter here..." 
+                            @bind-Value="_message" 
+                            class="w-100" />
+            <RadzenButton Click = "SendMessageAsync" Text="Send" ButtonStyle="ButtonStyle.Primary" />
         </div>
 
-    </div>
-    
+    </div> 
 
 </div>
 
@@ -28,9 +28,11 @@
 {
     private List<string> _messages = new List<string>();
 
+    private string _message;
+
     protected override async Task OnInitializedAsync()
     {
-        using var serverStream = GreeterClient.JoinChat(new HelloRequest());
+        using var serverStream = ChatRoomClient.JoinChat(new ChatRequest());
         var stream = serverStream.ResponseStream;
 
         await foreach (var message in stream.ReadAllAsync())
@@ -38,5 +40,16 @@
             _messages.Add(message.Message);
             this.StateHasChanged();
         }    
+    }
+
+    private async Task SendMessageAsync()
+    {
+        if (string.IsNullOrEmpty(_message))
+            return;
+
+        await ChatRoomClient.SendAsync(new ChatMessage
+        {
+            Message = _message
+        });
     }
 }

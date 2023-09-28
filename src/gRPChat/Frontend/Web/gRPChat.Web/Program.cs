@@ -20,7 +20,7 @@ builder.Services.AddScoped(services =>
     {
         HttpHandler = new GrpcWebHandler(new HttpClientHandler())
     });
-    return new Greeter.GreeterClient(channel);
+    return new ChatRoom.ChatRoomClient(channel);
 });
 
 await builder.Build().RunAsync();
