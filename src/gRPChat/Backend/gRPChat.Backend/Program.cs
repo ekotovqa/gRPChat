@@ -1,4 +1,7 @@
+using gRPChat.Backend;
 using gRPChat.Backend.Services;
+using gRPChat.Database;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"));
 
 var app = builder.Build();
 
@@ -19,7 +23,11 @@ app.UseStaticFiles();
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
 // Configure the HTTP request pipeline.
+using var scope = app.Services.CreateScope();
+scope.ServiceProvider.GetRequiredService<ChatDbContext>().Database.EnsureCreated();
+
 app.MapGrpcService<GreeterService>().EnableGrpcWeb();
+app.MapGrpcService<ChatRoomService>().EnableGrpcWeb();
 app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -10,11 +10,13 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.57.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.22" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Frontend\Web\gRPChat.Web\gRPChat.Web.csproj" />
     <ProjectReference Include="..\..\Shared\gRPChat.Protos\gRPChat.Protos\gRPChat.Protos.csproj" />
+    <ProjectReference Include="..\gRPChat.Database\gRPChat.Database.csproj" />
   </ItemGroup>
 
 </Project>
