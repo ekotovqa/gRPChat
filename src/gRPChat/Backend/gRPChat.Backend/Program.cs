@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
-builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"));
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"), ServiceLifetime.Singleton);
+builder.Services.AddSingleton<ChatRoomManager>();
 
 var app = builder.Build();
 

@@ -6,20 +6,22 @@
 
 <div style="height: 80vh; width: 50vw;">
 
-    <div style="display: grid; grid-template-rows: 1fr auto; height: 100%">
+    <Grid RowDefinitions="* auto">
 
-        <div style="grid-row: 1; overflow-y: auto; align-self: end; max-height: 100%">
+        <GridChild Row="1"
+                   VerticalAlignment="VerticalAlignment.Bottom" 
+                   style="overflow-y: auto; max-height: 100%">
             <ChatMessagesView Messages="_messages" />
-        </div>
-        
-        <div style ="grid-row: 2">
+        </GridChild>
+
+        <GridChild Row="2">
             <RadzenTextArea Placeholder="Enter here..." 
                             @bind-Value="_message" 
                             class="w-100" />
             <RadzenButton Click = "SendMessageAsync" Text="Send" ButtonStyle="ButtonStyle.Primary" />
-        </div>
+        </GridChild>
 
-    </div> 
+    </Grid> 
 
 </div>
 
@@ -51,5 +53,7 @@
         {
             Message = _message
         });
+
+        _message = "";
     }
 }
