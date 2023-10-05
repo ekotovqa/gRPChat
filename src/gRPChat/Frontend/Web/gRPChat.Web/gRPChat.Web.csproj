@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\gRPChat.Protos\gRPChat.Protos\gRPChat.Protos.csproj" />
+    <ProjectReference Include="..\Components\Blazor.CssGrid\Blazor.CssGrid.csproj" />
   </ItemGroup>
 
 </Project>
