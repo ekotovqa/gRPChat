@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
@@ -6,6 +7,7 @@ using gRPChat.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -23,4 +25,20 @@ builder.Services.AddScoped(services =>
     return new ChatRoom.ChatRoomClient(channel);
 });
 
-await builder.Build().RunAsync();
+builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+var defaultCulture = new CultureInfo("en-Us");
+
+var host = builder.Build();
+
+var culture = await host.Services.GetRequiredService<ILocalStorageService>().GetItemAsStringAsync("lang_culture");
+
+if (culture != null)
+    defaultCulture = new CultureInfo(culture.Replace("\"", ""));
+
+CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+
+await host.RunAsync();

@@ -3,6 +3,7 @@
 @using gRPChat.Protos;
 
 @inject ChatRoom.ChatRoomClient ChatRoomClient
+@inject IStringLocalizer<Chat> ChatLoc
 
 <div style="height: 80vh; width: 50vw;">
 
@@ -15,10 +16,10 @@
         </GridChild>
 
         <GridChild Row="2">
-            <RadzenTextArea Placeholder="Enter here..." 
+            <RadzenTextArea Placeholder="@ChatLoc["TextAreaPlaceHolder"]"
                             @bind-Value="_message" 
                             class="w-100" />
-            <RadzenButton Click = "SendMessageAsync" Text="Send" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenButton Click="SendMessageAsync" Text="@ChatLoc["SendButtonText"]" ButtonStyle="ButtonStyle.Primary" />
         </GridChild>
 
     </Grid> 

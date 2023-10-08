@@ -1,0 +1,66 @@
+﻿@using System.Globalization;
+@using Blazored.LocalStorage;
+
+@inject ILocalStorageService Storage
+@inject NavigationManager Navigation
+
+
+<RadzenDropDown 
+                Data=@_supportedPageCultures
+                TextProperty="DisplayName"
+                ValueProperty="CultureInfo"
+                @bind-Value=@_currentPageCulture
+                Change="CultureChanged">
+
+</RadzenDropDown>
+
+@code {
+    #region Private fields
+
+    private readonly PageCulture[] _supportedPageCultures = new []
+    {
+        new PageCulture("ru-RU"),
+        new PageCulture("en-US"),
+    };
+
+    private CultureInfo _currentPageCulture = new PageCulture(CultureInfo.CurrentCulture.Name).CultureInfo;
+
+    #endregion
+
+    #region Private Methods
+
+    private async Task CultureChanged(object param)
+    {
+        if (param is CultureInfo newPageCulture)
+        {
+            await Storage.SetItemAsync("lang_culture", newPageCulture.Name);
+            Navigation.NavigateTo(Navigation.Uri, true);
+        }
+    }
+
+    #endregion
+
+    private class PageCulture
+    {
+
+        public CultureInfo CultureInfo { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public string Name { get; set; }
+
+        public PageCulture(string name)
+        {
+            CultureInfo = new CultureInfo(name);
+
+            Name = CultureInfo.Name;
+
+            DisplayName = name switch
+            {
+                "ru-RU" => "Русский",
+                "en-US" => "English",
+                _ => ""
+            };
+        }
+    }
+}
