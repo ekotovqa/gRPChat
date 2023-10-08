@@ -5,6 +5,7 @@ using Grpc.Net.Client.Web;
 using gRPChat.Protos;
 using gRPChat.Web;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using System.Globalization;
@@ -27,11 +28,17 @@ builder.Services.AddScoped(services =>
 
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-var defaultCulture = new CultureInfo("en-Us");
+builder.Services.AddScoped<AuthorizeAPI>();
 
 var host = builder.Build();
+
+var defaultCulture = new CultureInfo("en-Us");
 
 var culture = await host.Services.GetRequiredService<ILocalStorageService>().GetItemAsStringAsync("lang_culture");
 

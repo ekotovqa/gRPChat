@@ -1,0 +1,25 @@
+﻿@page "/login"
+
+@layout LoginLayout
+
+@inject AuthorizeAPI AuthorizeAPI
+@inject NavigationManager NavManager
+
+<RadzenLogin Login="@OnLogin">
+
+</RadzenLogin>
+
+@code {
+
+
+    private async Task OnLogin(LoginArgs args)
+    {
+        var login = args.Username;
+        var password = args.Password;
+
+        var succes = await AuthorizeAPI.Login(login, password);
+
+        if (succes)
+            NavManager.NavigateTo("/");
+    }
+}
