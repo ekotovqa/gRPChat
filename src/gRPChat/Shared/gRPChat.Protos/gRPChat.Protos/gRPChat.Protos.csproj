@@ -6,11 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="chatroom.proto" />
-  </ItemGroup>
-
-
     <ItemGroup>
 	    <PackageReference Include="Google.Protobuf" Version="3.24.3" />
 	    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
@@ -22,7 +17,6 @@
 	
   <ItemGroup>
     <Protobuf Include="chatroom.proto" />
-    <Protobuf Include="greet.proto" />
   </ItemGroup>
 	
 

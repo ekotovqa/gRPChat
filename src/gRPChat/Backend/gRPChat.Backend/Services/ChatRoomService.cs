@@ -1,6 +1,5 @@
 ﻿using gRPChat.Protos;
 using Grpc.Core;
-using gRPChat.Database;
 using ChatMessage = gRPChat.Protos.ChatMessage;
 
 namespace gRPChat.Backend
