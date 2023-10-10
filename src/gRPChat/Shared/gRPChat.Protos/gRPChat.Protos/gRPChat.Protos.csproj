@@ -7,9 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="chatroom.proto" />
+    <None Remove="account.proto" />
   </ItemGroup>
-
 
     <ItemGroup>
 	    <PackageReference Include="Google.Protobuf" Version="3.24.3" />
@@ -21,8 +20,8 @@
     </ItemGroup>
 	
   <ItemGroup>
+    <Protobuf Include="account.proto" />
     <Protobuf Include="chatroom.proto" />
-    <Protobuf Include="greet.proto" />
   </ItemGroup>
 	
 
