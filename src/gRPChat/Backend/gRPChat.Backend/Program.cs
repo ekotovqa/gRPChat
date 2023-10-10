@@ -74,7 +74,7 @@ using var scope = app.Services.CreateScope();
 scope.ServiceProvider.GetRequiredService<ChatDbContext>().Database.EnsureCreated();
 
 app.MapGrpcService<ChatRoomService>().EnableGrpcWeb();
-app.MapGrpcService<AccountService>.EnableGrpcWeb();
+app.MapGrpcService<AccountService>().EnableGrpcWeb();
 app.MapFallbackToFile("index.html");
 
 app.Run();
