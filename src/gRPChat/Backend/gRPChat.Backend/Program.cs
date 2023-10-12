@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
-builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"), ServiceLifetime.Singleton);
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"));
 
 builder.Services.AddIdentity<ChatUser, IdentityRole>()
     .AddEntityFrameworkStores<ChatDbContext>()
@@ -49,7 +49,7 @@ builder.Services.AddCors(options => options.AddPolicy("AllowAll", builder =>
         .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc- Accept-Encoding");
 }));
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<ChatRoomManager>();
 
