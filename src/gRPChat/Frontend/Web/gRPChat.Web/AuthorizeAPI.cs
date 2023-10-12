@@ -10,7 +10,7 @@ namespace gRPChat.Web
 
         public AuthorizeAPI(AuthenticationStateProvider authenticationStateProvider, ILocalStorageService localStorage)
         {
-            _authenticationStateProvider = (IdentityAuthenticationStateProvider) authenticationStateProvider;
+            _authenticationStateProvider = (IdentityAuthenticationStateProvider)authenticationStateProvider;
             _localStorage = localStorage;
         }
 

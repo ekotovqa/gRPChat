@@ -49,7 +49,7 @@ builder.Services.AddCors(options => options.AddPolicy("AllowAll", builder =>
         .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc- Accept-Encoding");
 }));
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<ChatRoomManager>();
 

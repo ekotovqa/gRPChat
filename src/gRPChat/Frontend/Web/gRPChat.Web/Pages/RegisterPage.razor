@@ -1,0 +1,24 @@
+﻿@page "/register"
+
+@layout LoginLayout
+
+@inject AuthorizeAPI _authorizeAPI
+@inject NavigationManager _navigationManager
+
+<RadzenLogin Login="@OnRegister"
+             LoginText="Register"
+             Register="@ToLogin"
+             RegisterText="To Login">
+
+</RadzenLogin>
+
+@code {
+
+    private async Task OnRegister(LoginArgs args)
+    {
+        
+    }
+
+    private void ToLogin() => _navigationManager.NavigateTo("/login");
+
+}

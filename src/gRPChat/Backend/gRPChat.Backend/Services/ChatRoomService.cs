@@ -1,7 +1,9 @@
-﻿using gRPChat.Protos;
-using Grpc.Core;
-using ChatMessage = gRPChat.Protos.ChatMessage;
+﻿using Grpc.Core;
 using gRPChat.Database;
+using gRPChat.Database.Models;
+using gRPChat.Protos;
+using Microsoft.AspNetCore.Identity;
+using ChatMessage = gRPChat.Protos.ChatMessage;
 
 namespace gRPChat.Backend
 {
@@ -9,13 +11,15 @@ namespace gRPChat.Backend
     {
         private readonly ChatRoomManager _chatRoomManager;
         private readonly ChatDbContext _chatDbContext;
+        private readonly UserManager<ChatUser> _userManager;
 
         private List<IServerStreamWriter<ChatMessage>> _listeners = new();
 
-        public ChatRoomService(ChatRoomManager chatRoomManager, ChatDbContext chatDbContext)
+        public ChatRoomService(ChatRoomManager chatRoomManager, ChatDbContext chatDbContext, UserManager<ChatUser> userManager)
         {
             _chatRoomManager = chatRoomManager;
             _chatDbContext = chatDbContext;
+            _userManager = userManager;
 
             _chatRoomManager.MessageSended += ChatRoomService_MessageSended;
         }
@@ -30,19 +34,19 @@ namespace gRPChat.Backend
 
             _listeners.Add(responseStream);
 
-            while (!context.CancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(100);
-            }
+            await Task.Delay(int.MaxValue, context.CancellationToken);
 
             _listeners.Remove(responseStream);
         }
 
         public override async Task<ChatRequest> Send(ChatMessage request, ServerCallContext context)
         {
+            var user = await _userManager.GetUserAsync(context.GetHttpContext().User);
+
             var chatMessage = new Database.Models.ChatMessage
             {
-                Message = request.Message
+                Message = request.Message,
+                User = user
             };
 
             await _chatRoomManager.AddMessageAsync(chatMessage);
