@@ -16,7 +16,10 @@
 
     private async Task OnRegister(LoginArgs args)
     {
-        
+        var success = await _authorizeAPI.Register(args.Username, args.Password);
+
+        if (success)
+            _navigationManager.NavigateTo("/");
     }
 
     private void ToLogin() => _navigationManager.NavigateTo("/login");

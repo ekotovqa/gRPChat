@@ -37,7 +37,7 @@ namespace gRPChat.Backend
             {
                 var userIdentity = await _userManager.FindByNameAsync(user.UserName);
 
-                return TokenResponse(await user.GenerateJwtToken(_tokenParameters, _roleManager, _userManager));
+                return TokenResponse(await userIdentity.GenerateJwtToken(_tokenParameters, _roleManager, _userManager));
             }
 
             return new()
@@ -59,7 +59,7 @@ namespace gRPChat.Backend
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
-            if (isValidPassword)
+            if (!isValidPassword)
                 return ErrorResponse("Password wrong");
 
             return TokenResponse(await user.GenerateJwtToken(_tokenParameters, _roleManager, _userManager));
@@ -72,7 +72,7 @@ namespace gRPChat.Backend
             if (user == null)
                 return new UserInfoResponse()
                 {
-                    Error = new Error()
+                    Error = new Error
                     {
                         Message = "No access"
                     }
@@ -80,7 +80,7 @@ namespace gRPChat.Backend
 
             return new UserInfoResponse()
             {
-                Profile = new UserProfileInfo()
+                Profile = new UserProfileInfo
                 {
                     Username = user.UserName
                 }

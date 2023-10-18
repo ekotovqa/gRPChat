@@ -2,11 +2,13 @@
 using gRPChat.Database;
 using gRPChat.Database.Models;
 using gRPChat.Protos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ChatMessage = gRPChat.Protos.ChatMessage;
 
 namespace gRPChat.Backend
 {
+    [Authorize]
     public class ChatRoomService : ChatRoom.ChatRoomBase
     {
         private readonly ChatRoomManager _chatRoomManager;

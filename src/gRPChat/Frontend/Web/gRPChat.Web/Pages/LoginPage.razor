@@ -2,24 +2,26 @@
 
 @layout LoginLayout
 
-@inject AuthorizeAPI AuthorizeAPI
-@inject NavigationManager NavManager
+@inject AuthorizeAPI _authorizeAPI
+@inject NavigationManager _navigationManager
 
-<RadzenLogin Login="@OnLogin">
+<RadzenLogin Login="@OnLogin"
+             Register="@OnRegister">
 
 </RadzenLogin>
 
 @code {
-
 
     private async Task OnLogin(LoginArgs args)
     {
         var login = args.Username;
         var password = args.Password;
 
-        var succes = await AuthorizeAPI.Login(login, password);
+        var succes = await _authorizeAPI.Login(login, password);
 
         if (succes)
-            NavManager.NavigateTo("/");
+            _navigationManager.NavigateTo("/");
     }
+
+    private void OnRegister() => _navigationManager.NavigateTo("/register");
 }

@@ -1,42 +1,66 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims;
+@inherits LayoutComponentBase
 
-@inject NavigationManager NavManager
+@inject NavigationManager _navigationManager
+@inject IStringLocalizer<MainLayout> _loc
+@inject AuthenticationStateProvider _authenticationStateProvider
 
 <AuthorizeView>
     <Grid RowDefinitions="* auto *"
           ColumnDefinitions="* auto *"
           Width="100vw"
           Height="100vh"
-          style="background:aqua">
+          style="background: gray">
 
         <GridChild Row="1"
-                   Column="3">
+                   Column="1">
             <CultureSelector />
         </GridChild>
 
-        <GridChild Column="2"
-                   Row="2">
+        <GridChild Row="1"
+                   Column="2">
+            <div>
+                @_loc["Hello"] @_user?.Identity?.Name
+            </div>
+        </GridChild>
+
+        <GridChild Row="1"
+                   Column="3">
+            <RadzenButton Text="@_loc["Logout"]"
+                           Click="OnLogout"/>
+        </GridChild>
+
+        <GridChild Row="2"
+                   Column="2">
             @Body
         </GridChild>
     </Grid>
 </AuthorizeView>
 
 @code{
+    private ClaimsPrincipal? _user;
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthenticationState is not null)
+        if (AuthenticationState != null)
         {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
+            var state = await AuthenticationState;
 
-            if (user?.Identity is not null && !user.Identity.IsAuthenticated)
+            _user = state.User;
+
+            if (_user.Identity is { IsAuthenticated: false})
             {
-                NavManager.NavigateTo("login");
+                _navigationManager.NavigateTo("login");
             }
-        }
+        }      
+    }
+
+    private async Task OnLogout()
+    {
+        _navigationManager.NavigateTo("login");
+        await ((IdentityAuthenticationStateProvider) _authenticationStateProvider).MarkLogouted();
     }
 }

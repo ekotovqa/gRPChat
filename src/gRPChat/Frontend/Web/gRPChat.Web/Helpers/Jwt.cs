@@ -10,9 +10,9 @@ namespace gRPChat.Web.Helpers
            => new(new ClaimsPrincipal(GetIdentityFromJwtToken(token)));
 
         private static ClaimsIdentity GetIdentityFromJwtToken(string token)
-            => new ClaimsIdentity(ParseClaimsFromJwtToken(token), "jwt");
+            => new(ParseClaimsFromJwtToken(token), "jwt");
 
-        private static IEnumerable<Claim> ParseClaimsFromJwtToken(string token)
-            => new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
+        private static IEnumerable<Claim> ParseClaimsFromJwtToken(string jwt)
+            => new JwtSecurityTokenHandler().ReadJwtToken(jwt).Claims;
     }
 }

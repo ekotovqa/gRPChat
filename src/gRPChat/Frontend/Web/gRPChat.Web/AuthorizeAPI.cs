@@ -1,29 +1,77 @@
 ﻿using Blazored.LocalStorage;
+using gRPChat.Protos;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace gRPChat.Web
 {
     public class AuthorizeAPI
     {
-        private readonly IdentityAuthenticationStateProvider _authenticationStateProvider;
         private readonly ILocalStorageService _localStorage;
+        private readonly Account.AccountClient _accountClient;
+        private readonly IdentityAuthenticationStateProvider _authenticationStateProvider;
+        
 
-        public AuthorizeAPI(AuthenticationStateProvider authenticationStateProvider, ILocalStorageService localStorage)
+        public AuthorizeAPI(AuthenticationStateProvider authenticationStateProvider, ILocalStorageService localStorage, Account.AccountClient accountClient)
         {
-            _authenticationStateProvider = (IdentityAuthenticationStateProvider)authenticationStateProvider;
+            _authenticationStateProvider = (IdentityAuthenticationStateProvider) authenticationStateProvider;
             _localStorage = localStorage;
+            _accountClient = accountClient;
         }
 
         public async Task<bool> Login(string login, string password)
         {
-            var token = "123456789";
+            try
+            {
+                var tokenResponse = await _accountClient.LoginAsync(new LoginRequest
+                {
+                    Login = login,
+                    Password = password
+                });
 
+                if (tokenResponse.ResultCase == LoginResponse.ResultOneofCase.Login)
+                {
+                    var token = tokenResponse.Login.Token;
+                    Console.WriteLine(token);
+                    await _localStorage.SetItemAsync("token", token);
+                    _authenticationStateProvider.MarkUserAsAuthenticated(token);
 
-            await _localStorage.SetItemAsync("token", token);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
-            _authenticationStateProvider.MarkUserAsAuthenticated(token);
-
-            return true;
+            return false;
         }
+
+        public async Task<bool> Register(string userName, string password)
+        {
+            try
+            {
+                var tokenResponse = await _accountClient.RegisterAsync(new RegisterRequest
+                {
+                    Login = userName,
+                    Password = password
+                });
+
+                if (tokenResponse.ResultCase == LoginResponse.ResultOneofCase.Login)
+                {
+                    var token = tokenResponse.Login.Token;
+                    Console.WriteLine(token);
+                    await _localStorage.SetItemAsync("token", token);
+                    _authenticationStateProvider.MarkUserAsAuthenticated(token);
+
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return false;
+        }       
     }
 }

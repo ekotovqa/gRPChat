@@ -1,8 +1,8 @@
 ﻿@using System.Globalization;
 @using Blazored.LocalStorage;
 
-@inject ILocalStorageService Storage
-@inject NavigationManager Navigation
+@inject ILocalStorageService _storage
+@inject NavigationManager _navigationManager
 
 
 <RadzenDropDown 
@@ -33,8 +33,8 @@
     {
         if (param is CultureInfo newPageCulture)
         {
-            await Storage.SetItemAsync("lang_culture", newPageCulture.Name);
-            Navigation.NavigateTo(Navigation.Uri, true);
+            await _storage.SetItemAsync("lang_culture", newPageCulture.Name);
+            _navigationManager.NavigateTo(_navigationManager.Uri, true);
         }
     }
 

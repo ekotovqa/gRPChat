@@ -12,7 +12,6 @@ namespace gRPChat.Backend
         private string _secretKey;
 
         public bool CanValidateToken => true;
-
         public int MaximumTokenSizeInBytes { get; set; } = int.MaxValue;
 
         public ChatJwtValidator(TokenParameters tokenParameters)
