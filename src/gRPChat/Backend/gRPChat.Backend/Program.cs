@@ -7,11 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-
 // Add services to the container.
 builder.Services.AddGrpc();
+
 builder.Services.AddDbContext<ChatDbContext>(options => options.UseSqlite("Data Source=chat.db"));
 
 builder.Services.AddIdentity<ChatUser, IdentityRole>()
@@ -23,14 +21,15 @@ TokenParameters tokenParameters = new();
 builder.Services.AddSingleton(tokenParameters);
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = true;
-    options.SecurityTokenValidators.Add(new ChatJwtValidator(tokenParameters));
-});
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = true;
+        options.SecurityTokenValidators.Add(new ChatJwtValidator(tokenParameters));
+    });
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -55,10 +54,14 @@ builder.Services.AddSingleton<ChatRoomManager>();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseWebAssemblyDebugging();
+}
+
 app.UseHttpsRedirection();
-
 app.UseBlazorFrameworkFiles();
-
 app.UseStaticFiles();
 
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
@@ -66,16 +69,14 @@ app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
-
 app.UseAuthorization();
-
-// Configure the HTTP request pipeline.
-using var scope = app.Services.CreateScope();
-scope.ServiceProvider.GetRequiredService<ChatDbContext>().Database.EnsureCreated();
 
 app.MapGrpcService<ChatRoomService>().EnableGrpcWeb();
 app.MapGrpcService<AccountService>().EnableGrpcWeb();
+
 app.MapFallbackToFile("index.html");
+
+app.Services.CreateScope().ServiceProvider.GetRequiredService<ChatDbContext>().Database.EnsureCreated();
 
 app.Run();
 
@@ -83,6 +84,6 @@ public class TokenParameters
 {
     public string Issure => "issure";
     public string Audience => "audience";
-    public string SecretKey => "secretKeysecretKeysecretKey";
+    public string SecretKey => "secretKeysecretKeysecretKeysecretKeysecretKeysecretKey";
     public DateTime Expiry => DateTime.Now.AddDays(1);
 }

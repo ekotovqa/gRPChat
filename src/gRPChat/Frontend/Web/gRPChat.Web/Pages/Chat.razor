@@ -1,9 +1,13 @@
 ﻿@page "/"
+@using Blazored.LocalStorage;
 @using Grpc.Core;
 @using gRPChat.Protos;
 
-@inject ChatRoom.ChatRoomClient ChatRoomClient
-@inject IStringLocalizer<Chat> ChatLoc
+@inject NavigationManager _navigationManager
+@inject IStringLocalizer<Chat> _loc
+@inject ILocalStorageService _storage
+@inject ChatRoom.ChatRoomClient _chatRoomClient
+
 
 <div style="height: 80vh; width: 50vw;">
 
@@ -16,10 +20,10 @@
         </GridChild>
 
         <GridChild Row="2">
-            <RadzenTextArea Placeholder="@ChatLoc["TextAreaPlaceHolder"]"
+            <RadzenTextArea Placeholder="@_loc["TextAreaPlaceHolder"]"
                             @bind-Value="_message" 
                             class="w-100" />
-            <RadzenButton Click="SendMessageAsync" Text="@ChatLoc["SendButtonText"]" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenButton Click="SendMessageAsync" Text="@_loc["SendButtonText"]" ButtonStyle="ButtonStyle.Primary" />
         </GridChild>
 
     </Grid> 
@@ -29,20 +33,47 @@
 
 @code
 {
-    private List<string> _messages = new List<string>();
+    private List<string> _messages = new();
 
     private string _message;
 
+    private readonly CancellationTokenSource _cancellationToken = new();
+
     protected override async Task OnInitializedAsync()
     {
-        using var serverStream = ChatRoomClient.JoinChat(new ChatRequest());
+        _navigationManager.LocationChanged += NavigationManagerOnLocationChanged;
+
+        var serverStream = _chatRoomClient.JoinChat(new ChatRequest(), cancellationToken: _cancellationToken.Token);
         var stream = serverStream.ResponseStream;
 
-        await foreach (var message in stream.ReadAllAsync())
+        try
         {
-            _messages.Add(message.Message);
-            this.StateHasChanged();
-        }    
+            await foreach (var message in stream.ReadAllAsync(_cancellationToken.Token))
+            {
+                _messages.Add(message.Message);
+                this.StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+
+            Console.WriteLine(e.Message);
+        }
+        finally
+        {
+            serverStream.Dispose();
+        }
+
+    }
+
+    private void NavigationManagerOnLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        _cancellationToken.Cancel();
     }
 
     private async Task SendMessageAsync()
@@ -50,7 +81,7 @@
         if (string.IsNullOrEmpty(_message))
             return;
 
-        await ChatRoomClient.SendAsync(new ChatMessage
+        await _chatRoomClient.SendAsync(new ChatMessage
         {
             Message = _message
         });

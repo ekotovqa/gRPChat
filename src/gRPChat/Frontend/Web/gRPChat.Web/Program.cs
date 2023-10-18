@@ -13,14 +13,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddAuthGrpcClient<Account.AccountClient>();
 builder.Services.AddAuthGrpcClient<ChatRoom.ChatRoomClient>();
 
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
-
 builder.Services.AddBlazoredLocalStorage();
-
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthorizeAPI>();
-
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<AuthorizeAPI>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityAuthenticationStateProvider>();
 
 var host = builder.Build();
 

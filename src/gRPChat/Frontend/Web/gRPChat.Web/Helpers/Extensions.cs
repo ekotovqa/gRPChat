@@ -18,10 +18,10 @@ namespace gRPChat.Web.Helpers
 
             if (localStorage != null)
             {
-                var culture = await localStorage.GetItemAsStringAsync("lang_culture");
+                var culture = await localStorage.GetItemAsync<string>("lang_culture");
 
                 if (culture != null)
-                    defaultCulture = new CultureInfo(culture.Replace("\"", ""));
+                    defaultCulture = new CultureInfo(culture);
             }
 
             CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
@@ -30,21 +30,24 @@ namespace gRPChat.Web.Helpers
 
         public static void AddAuthGrpcClient<T>(this IServiceCollection services) where T : ClientBase
         {
-            services.AddScoped(async provder =>
+            services.AddScoped(provider =>
             {
-                var client = (T)Activator.CreateInstance(typeof(T), await GetChanel(provder));
-                return client;
+                var nav = provider.GetService<NavigationManager>();
+                var storage = provider.GetService<ISyncLocalStorageService>();
+
+                if (nav != null && storage != null)
+                {
+                    string token = storage.GetItem<string>("token");
+
+                    var client = (T?)Activator.CreateInstance(typeof(T), nav.GetAuthChanel(token));
+
+                    if (client != null)
+                        return client;
+                }
+
+                return Activator.CreateInstance<T>();
+
             });
-        }
-
-        private static async Task<GrpcChannel> GetChanel(IServiceProvider provider)
-        {
-            var nav = provider.GetService<NavigationManager>();
-            var storage = provider.GetService<ILocalStorageService>();
-
-            string token = await storage.GetItemAsStringAsync("token");
-
-            return nav.GetAuthChanel(token);
         }
 
         private static GrpcChannel GetAuthChanel(this NavigationManager navigation, string token) =>
@@ -54,16 +57,11 @@ namespace gRPChat.Web.Helpers
                 Credentials = ChannelCredentials.Create(new SslCredentials(), GetJwtCredentials(token))
             });
 
-        private static GrpcChannel GetAnonChanel(this NavigationManager navigation) =>
-            GrpcChannel.ForAddress(navigation.BaseUri, new GrpcChannelOptions
-            {
-                HttpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()))
-            });
-
         private static CallCredentials GetJwtCredentials(string token) =>
             CallCredentials.FromInterceptor((_, metadate) =>
             {
                 metadate.AddJwt(token);
+
                 return Task.CompletedTask;
             });
 
