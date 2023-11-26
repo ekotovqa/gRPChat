@@ -51,7 +51,7 @@ namespace gRPChat.Web.Helpers
         }
 
         private static GrpcChannel GetAuthChanel(this NavigationManager navigation, string token) =>
-            GrpcChannel.ForAddress("https://localhost:5003", new GrpcChannelOptions
+            GrpcChannel.ForAddress(navigation.BaseUri, new GrpcChannelOptions
             {
                 HttpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler())),
                 Credentials = ChannelCredentials.Create(new SslCredentials(), GetJwtCredentials(token))

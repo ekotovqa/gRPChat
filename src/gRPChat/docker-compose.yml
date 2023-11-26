@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+
+  reverseproxy:
+    build:
+      context: ./Nginx
+      dockerfile: Nginx.Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+
+  app:
+    depends_on:
+      - reverseproxy
+    build:
+      context: ./
+      dockerfile: App.Dockerfile
+    expose:
+      - "5003"
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=KotofeyADMN@vbkFyf
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    volumes:
+      - ./Nginx/https:/https:ro
+    restart: always
