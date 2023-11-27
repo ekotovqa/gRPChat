@@ -10,7 +10,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - /etc/letsencrypt:/https:ro
     restart: always
 
   app:
@@ -22,8 +22,8 @@ services:
     expose:
       - "5003"
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/example.com+4-key.pem
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/example.com+4.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/live/v2160200.hosted-by-vdsina.ru/privkey.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/live/v2160200.hosted-by-vdsina.ru/fullchain.pem
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - /etc/letsencrypt:/https:ro
     restart: always
